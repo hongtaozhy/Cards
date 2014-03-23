@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5053" systemVersion="13A603" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="5053"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="FollowingViewController">
+            <connections>
+                <outlet property="contentView" destination="rYe-yk-EqB" id="W8c-ZC-ZWw"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rYe-yk-EqB">
+                    <rect key="frame" x="0.0" y="105" width="320" height="463"/>
+                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    <color key="backgroundColor" red="0.93148311491935487" green="1" blue="0.89935105846774188" alpha="1" colorSpace="calibratedRGB"/>
+                </view>
+            </subviews>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="rYe-yk-EqB" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="105" id="cPk-ju-Lwe"/>
+                <constraint firstAttribute="bottom" secondItem="rYe-yk-EqB" secondAttribute="bottom" id="jBB-2d-FQt"/>
+                <constraint firstAttribute="trailing" secondItem="rYe-yk-EqB" secondAttribute="trailing" id="mcV-X4-Ak9"/>
+                <constraint firstItem="rYe-yk-EqB" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="xX4-Vy-w0f"/>
+            </constraints>
+            <simulatedStatusBarMetrics key="simulatedStatusBarMetrics"/>
+            <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+        </view>
+    </objects>
+</document>
