@@ -7,6 +7,7 @@
 //
 
 #import "SecondViewController.h"
+#import "InteractiveTransition.h"
 #import "CardStyle.h"
 
 @interface SecondViewController ()
@@ -44,8 +45,11 @@
 
 - (void)setupGestureRecognizers
 {
-    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self.transitioningDelegate action:@selector(didTapBackground:)];
+    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapBackground:)];
     [self.view addGestureRecognizer:tapRecognizer];
+    
+    UIPanGestureRecognizer *panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:(InteractiveTransition *)self.transitioningDelegate action:@selector(didPan:)];
+    [self.view addGestureRecognizer:panRecognizer];
 }
 
 - (void)setupContentView

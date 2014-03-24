@@ -78,12 +78,12 @@
 
 - (IBAction)didTapButton:(id)sender
 {
-//    SecondViewController *viewController = [[SecondViewController alloc] initWithNibName:@"SecondViewController" bundle:nil];
-//    viewController.modalPresentationStyle = UIModalPresentationCustom;
-//    self.interactiveTransition = [[InteractiveTransition alloc] initWithViewController:self];
-//    viewController.transitioningDelegate = self.interactiveTransition;
-//
-//    [self presentViewController:viewController animated:YES completion:nil];
+    SecondViewController *viewController = [[SecondViewController alloc] initWithNibName:@"SecondViewController" bundle:nil];
+    viewController.modalPresentationStyle = UIModalPresentationCustom;
+    self.interactiveTransition = [[InteractiveTransition alloc] initWithViewController:self];
+    viewController.transitioningDelegate = self.interactiveTransition;
+
+    [self presentViewController:viewController animated:YES completion:nil];
 }
 
 @end
