@@ -42,7 +42,7 @@ static const CGFloat AnimationDuration = 0.35f;
         
         } completion:^(BOOL finished) {
         
-            [transitionContext completeTransition:YES];
+            [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
         
         }];
     }
@@ -63,7 +63,7 @@ static const CGFloat AnimationDuration = 0.35f;
         
         } completion:^(BOOL finished) {
         
-            [transitionContext completeTransition:YES];
+            [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
         
         }];
     }

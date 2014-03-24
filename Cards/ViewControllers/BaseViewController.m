@@ -6,17 +6,17 @@
 //  Copyright (c) 2014 Alfred Hanssen. All rights reserved.
 //
 
-#import "MainViewController.h"
-#import "ProfileViewController.h"
-#import "TransitioningDelegate.h"
+#import "BaseViewController.h"
+#import "FirstViewController.h"
+#import "InteractiveTransition.h"
 
-@interface MainViewController ()
+@interface BaseViewController ()
 
-@property (nonatomic, strong) TransitioningDelegate *transitioningDelegate;
+@property (nonatomic, strong) InteractiveTransition *interactiveTransition;
 
 @end
 
-@implementation MainViewController
+@implementation BaseViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -31,7 +31,12 @@
 {
     [super viewDidLoad];
     
-    self.transitioningDelegate = [TransitioningDelegate new];
+    self.interactiveTransition = [InteractiveTransition new];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
 }
 
 - (void)didReceiveMemoryWarning
@@ -42,10 +47,10 @@
 
 #pragma mark
 
-- (IBAction)didTapProfile:(id)sender
+- (IBAction)didTapButton:(id)sender
 {
-    ProfileViewController *viewController = [[ProfileViewController alloc] initWithNibName:@"ProfileViewController" bundle:nil];
-    viewController.transitioningDelegate = self.transitioningDelegate;
+    FirstViewController *viewController = [[FirstViewController alloc] initWithNibName:@"FirstViewController" bundle:nil];
+    viewController.transitioningDelegate = self.interactiveTransition;
     viewController.modalPresentationStyle = UIModalPresentationCustom;
     
     [self presentViewController:viewController animated:YES completion:nil];

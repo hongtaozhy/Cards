@@ -7,7 +7,7 @@
 //
 
 #import "AppDelegate.h"
-#import "MainViewController.h"
+#import "BaseViewController.h"
 
 @implementation AppDelegate
 
@@ -15,7 +15,7 @@
 {
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 
-    MainViewController *viewController = [[MainViewController alloc] initWithNibName:@"MainViewController" bundle:nil];
+    BaseViewController *viewController = [[BaseViewController alloc] initWithNibName:@"BaseViewController" bundle:nil];
     self.window.rootViewController = viewController;
     
     self.window.backgroundColor = [UIColor whiteColor];

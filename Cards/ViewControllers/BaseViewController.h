@@ -1,5 +1,5 @@
 //
-//  ProfileViewController.h
+//  MainViewController.h
 //  Cards
 //
 //  Created by Alfred Hanssen on 3/22/14.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface ProfileViewController : UIViewController
+@interface BaseViewController : UIViewController
 
 @end

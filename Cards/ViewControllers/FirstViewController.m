@@ -1,22 +1,23 @@
 //
-//  ProfileViewController.m
+//  FirstViewController.m
 //  Cards
 //
 //  Created by Alfred Hanssen on 3/22/14.
 //  Copyright (c) 2014 Alfred Hanssen. All rights reserved.
 //
 
-#import "ProfileViewController.h"
-#import "FollowingViewController.h"
+#import "FirstViewController.h"
+#import "SecondViewController.h"
+#import "InteractiveTransition.h"
 #import "CardStyle.h"
 
-@interface ProfileViewController ()
+@interface FirstViewController ()
 
 @property (nonatomic, weak) IBOutlet UIView *contentView;
 
 @end
 
-@implementation ProfileViewController
+@implementation FirstViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -47,6 +48,10 @@
 {
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapBackground:)];
     [self.view addGestureRecognizer:tapRecognizer];
+    
+    ((InteractiveTransition *)self.transitioningDelegate).viewController = self;
+    UIPanGestureRecognizer *panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self.transitioningDelegate action:@selector(didPan:)];
+    [self.view addGestureRecognizer:panRecognizer];
 }
 
 - (void)setupContentView
@@ -71,18 +76,9 @@
     }
 }
 
-- (IBAction)didTapLikes:(id)sender
+- (IBAction)didTapButton:(id)sender
 {
-    FollowingViewController *viewController = [[FollowingViewController alloc] initWithNibName:@"FollowingViewController" bundle:nil];
-    viewController.transitioningDelegate = self.transitioningDelegate;
-    viewController.modalPresentationStyle = UIModalPresentationCustom;
-    
-    [self presentViewController:viewController animated:YES completion:nil];
-}
-
-- (IBAction)didTapFollowing:(id)sender
-{
-    FollowingViewController *viewController = [[FollowingViewController alloc] initWithNibName:@"FollowingViewController" bundle:nil];
+    SecondViewController *viewController = [[SecondViewController alloc] initWithNibName:@"SecondViewController" bundle:nil];
     viewController.transitioningDelegate = self.transitioningDelegate;
     viewController.modalPresentationStyle = UIModalPresentationCustom;
     

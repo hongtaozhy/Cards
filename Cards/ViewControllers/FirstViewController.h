@@ -1,5 +1,5 @@
 //
-//  MainViewController.h
+//  FirstViewController.h
 //  Cards
 //
 //  Created by Alfred Hanssen on 3/22/14.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface MainViewController : UIViewController
+@interface FirstViewController : UIViewController
 
 @end

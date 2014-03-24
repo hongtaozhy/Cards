@@ -1,5 +1,5 @@
 //
-//  FollowingViewController.h
+//  SecondViewController.h
 //  Cards
 //
 //  Created by Alfred Hanssen on 3/23/14.
@@ -8,6 +8,6 @@
 
 #import <UIKit/UIKit.h>
 
-@interface FollowingViewController : UIViewController
+@interface SecondViewController : UIViewController
 
 @end

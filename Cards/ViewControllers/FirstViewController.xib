@@ -4,7 +4,7 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ProfileViewController">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="FirstViewController">
             <connections>
                 <outlet property="contentView" destination="pCs-4x-upQ" id="429-hZ-31W"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
@@ -19,43 +19,26 @@
                     <rect key="frame" x="0.0" y="100" width="320" height="468"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <subviews>
-                        <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bWq-Ts-cBN">
-                            <rect key="frame" x="200" y="262" width="100" height="44"/>
-                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                            <constraints>
-                                <constraint firstAttribute="height" constant="44" id="Sq3-iK-5FN"/>
-                                <constraint firstAttribute="width" constant="100" id="z0X-Fo-MQq"/>
-                            </constraints>
-                            <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
-                            <state key="normal" title="Likes">
-                                <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                            </state>
-                            <connections>
-                                <action selector="didTapLikes:" destination="-1" eventType="touchUpInside" id="9Z1-St-ooG"/>
-                            </connections>
-                        </button>
-                        <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HI0-Aw-ry6">
-                            <rect key="frame" x="20" y="262" width="100" height="44"/>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HI0-Aw-ry6">
+                            <rect key="frame" x="110" y="212" width="100" height="44"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="100" id="16u-Ky-EG8"/>
                                 <constraint firstAttribute="height" constant="44" id="YKy-61-xFb"/>
                             </constraints>
                             <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
-                            <state key="normal" title="Following">
+                            <state key="normal" title="Second">
                                 <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                             </state>
                             <connections>
-                                <action selector="didTapFollowing:" destination="-1" eventType="touchUpInside" id="fOf-uP-wca"/>
+                                <action selector="didTapButton:" destination="-1" eventType="touchUpInside" id="Or7-dT-FRo"/>
                             </connections>
                         </button>
                     </subviews>
                     <color key="backgroundColor" red="1" green="0.87862271070480347" blue="0.87862271070480347" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstAttribute="centerY" secondItem="HI0-Aw-ry6" secondAttribute="centerY" id="RVA-Px-f4n"/>
-                        <constraint firstAttribute="trailing" secondItem="bWq-Ts-cBN" secondAttribute="trailing" constant="20" id="XH4-c6-CaL"/>
-                        <constraint firstAttribute="centerY" secondItem="bWq-Ts-cBN" secondAttribute="centerY" id="cLt-a9-Z1Y"/>
-                        <constraint firstItem="HI0-Aw-ry6" firstAttribute="leading" secondItem="pCs-4x-upQ" secondAttribute="leading" constant="20" id="oXr-1G-LDb"/>
+                        <constraint firstAttribute="centerX" secondItem="HI0-Aw-ry6" secondAttribute="centerX" id="ck6-sg-KB2"/>
                     </constraints>
                 </view>
             </subviews>
