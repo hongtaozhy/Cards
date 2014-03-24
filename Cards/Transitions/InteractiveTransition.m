@@ -13,6 +13,7 @@ static const CGFloat AnimationDuration = 0.35f;
 @interface InteractiveTransition () <UIViewControllerAnimatedTransitioning, UIViewControllerInteractiveTransitioning>
 
 @property (nonatomic, strong) id<UIViewControllerContextTransitioning> transitionContext;
+@property (nonatomic, weak) UIViewController *viewController;
 @property (nonatomic, assign) BOOL interactive;
 @property (nonatomic, assign) BOOL presenting;
 
@@ -20,11 +21,15 @@ static const CGFloat AnimationDuration = 0.35f;
 
 @implementation InteractiveTransition
 
-- (void)animationEnded:(BOOL)transitionCompleted
+- (instancetype)initWithViewController:(UIViewController *)viewController
 {
-    self.interactive = NO;
-    self.presenting = NO;
-    self.transitionContext = nil;
+    self = [super init];
+    if (self)
+    {
+        _viewController = viewController;
+    }
+    
+    return self;
 }
 
 #pragma mark - Transitioning Delegate
@@ -63,6 +68,19 @@ static const CGFloat AnimationDuration = 0.35f;
     return nil;
 }
 
+#pragma mark - Transitioning
+
+- (void)animationEnded:(BOOL)transitionCompleted
+{
+    self.interactive = NO;
+    self.presenting = NO;
+    if (self.interactive)
+    {
+        self.viewController = nil;
+    }
+    self.transitionContext = nil;
+}
+
 #pragma mark - Animated Transitioning
 
 - (NSTimeInterval)transitionDuration:(id <UIViewControllerContextTransitioning>)transitionContext
@@ -85,7 +103,6 @@ static const CGFloat AnimationDuration = 0.35f;
         fromViewController.view.userInteractionEnabled = NO;
         toViewController.view.frame = startFrame;
         
-        [transitionContext.containerView addSubview:fromViewController.view];
         [transitionContext.containerView addSubview:toViewController.view];
         
         [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
@@ -103,9 +120,6 @@ static const CGFloat AnimationDuration = 0.35f;
     {
         toViewController.view.userInteractionEnabled = YES;
         
-        [transitionContext.containerView addSubview:toViewController.view];
-        [transitionContext.containerView addSubview:fromViewController.view];
-        
         CGRect endFrame = fromViewController.view.frame;
         endFrame.origin.y += fromViewController.view.frame.size.height;
         
@@ -120,22 +134,6 @@ static const CGFloat AnimationDuration = 0.35f;
             
         }];
     }
-}
-
-#pragma mark - Interactive Transitioning
-
-- (void)startInteractiveTransition:(id<UIViewControllerContextTransitioning>)transitionContext
-{
-    self.transitionContext = transitionContext;
-
-    UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
-    UIViewController *toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
-    
-    toViewController.view.frame = [transitionContext containerView].bounds;
-    fromViewController.view.frame = [transitionContext containerView].bounds;
-
-    [transitionContext.containerView addSubview:toViewController.view];
-    [transitionContext.containerView addSubview:fromViewController.view];
 }
 
 #pragma mark - Gesture Recognizer
@@ -168,14 +166,26 @@ static const CGFloat AnimationDuration = 0.35f;
     }
 }
 
+#pragma mark - Interactive Transitioning
+
+- (CGFloat)completionSpeed
+{
+    return  1.0f - self.percentComplete;
+}
+
+- (void)startInteractiveTransition:(id<UIViewControllerContextTransitioning>)transitionContext
+{
+    self.transitionContext = transitionContext;
+}
+
 #pragma mark
 
 - (void)updateInteractiveTransition:(CGFloat)percentComplete
 {
     id<UIViewControllerContextTransitioning> transitionContext = self.transitionContext;
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
-
-    CGRect bounds = [transitionContext containerView].bounds;
+    
+    CGRect bounds = transitionContext.containerView.bounds;
     bounds = CGRectOffset(bounds, 0, CGRectGetHeight(bounds) * percentComplete);
     fromViewController.view.frame = bounds;
 }
@@ -184,8 +194,12 @@ static const CGFloat AnimationDuration = 0.35f;
 {
     id<UIViewControllerContextTransitioning> transitionContext = self.transitionContext;
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
-    
-    CGRect endFrame = [transitionContext containerView].bounds;
+
+    UIViewController *toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
+    toViewController.view.userInteractionEnabled = YES;
+    toViewController.view.tintAdjustmentMode = UIViewTintAdjustmentModeAutomatic;
+
+    CGRect endFrame = transitionContext.containerView.bounds;
     endFrame.origin.y += endFrame.size.height;
 
     [UIView animateWithDuration:[self completionSpeed] animations:^{
@@ -194,8 +208,8 @@ static const CGFloat AnimationDuration = 0.35f;
     
     } completion:^(BOOL finished) {
     
-        [transitionContext completeTransition:YES];
-    
+        [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+        
     }];
 }
 
@@ -204,7 +218,7 @@ static const CGFloat AnimationDuration = 0.35f;
     id<UIViewControllerContextTransitioning> transitionContext = self.transitionContext;
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
     
-    CGRect endFrame = [transitionContext containerView].bounds;
+    CGRect endFrame = transitionContext.containerView.bounds;
 
     [UIView animateWithDuration:[self completionSpeed] animations:^{
     
@@ -212,8 +226,8 @@ static const CGFloat AnimationDuration = 0.35f;
     
     } completion:^(BOOL finished) {
     
-        [transitionContext completeTransition:NO];
-    
+        [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+        
     }];
 }
 

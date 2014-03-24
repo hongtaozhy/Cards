@@ -44,7 +44,7 @@
 
 - (void)setupGestureRecognizers
 {
-    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapBackground:)];
+    UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self.transitioningDelegate action:@selector(didTapBackground:)];
     [self.view addGestureRecognizer:tapRecognizer];
 }
 

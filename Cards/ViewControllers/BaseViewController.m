@@ -30,8 +30,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    self.interactiveTransition = [InteractiveTransition new];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -50,8 +48,9 @@
 - (IBAction)didTapButton:(id)sender
 {
     FirstViewController *viewController = [[FirstViewController alloc] initWithNibName:@"FirstViewController" bundle:nil];
-    viewController.transitioningDelegate = self.interactiveTransition;
     viewController.modalPresentationStyle = UIModalPresentationCustom;
+    self.interactiveTransition = [[InteractiveTransition alloc] initWithViewController:self];
+    viewController.transitioningDelegate = self.interactiveTransition;
     
     [self presentViewController:viewController animated:YES completion:nil];
 }

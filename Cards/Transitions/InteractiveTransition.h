@@ -10,7 +10,7 @@
 
 @interface InteractiveTransition : UIPercentDrivenInteractiveTransition <UIViewControllerTransitioningDelegate>
 
-@property (nonatomic, weak) UIViewController *viewController;
+- (instancetype)initWithViewController:(UIViewController *)viewController;
 
 - (void)didPan:(UIPanGestureRecognizer *)recognizer;
 

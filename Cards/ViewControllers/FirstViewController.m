@@ -14,6 +14,7 @@
 @interface FirstViewController ()
 
 @property (nonatomic, weak) IBOutlet UIView *contentView;
+@property (nonatomic, strong) InteractiveTransition *interactiveTransition;
 
 @end
 
@@ -49,7 +50,6 @@
     UITapGestureRecognizer *tapRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapBackground:)];
     [self.view addGestureRecognizer:tapRecognizer];
     
-    ((InteractiveTransition *)self.transitioningDelegate).viewController = self;
     UIPanGestureRecognizer *panRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self.transitioningDelegate action:@selector(didPan:)];
     [self.view addGestureRecognizer:panRecognizer];
 }
@@ -78,11 +78,12 @@
 
 - (IBAction)didTapButton:(id)sender
 {
-    SecondViewController *viewController = [[SecondViewController alloc] initWithNibName:@"SecondViewController" bundle:nil];
-    viewController.transitioningDelegate = self.transitioningDelegate;
-    viewController.modalPresentationStyle = UIModalPresentationCustom;
-    
-    [self presentViewController:viewController animated:YES completion:nil];
+//    SecondViewController *viewController = [[SecondViewController alloc] initWithNibName:@"SecondViewController" bundle:nil];
+//    viewController.modalPresentationStyle = UIModalPresentationCustom;
+//    self.interactiveTransition = [[InteractiveTransition alloc] initWithViewController:self];
+//    viewController.transitioningDelegate = self.interactiveTransition;
+//
+//    [self presentViewController:viewController animated:YES completion:nil];
 }
 
 @end
