@@ -16,6 +16,7 @@ static const CGFloat AnimationDuration = 0.35f;
 @property (nonatomic, weak) UIViewController *viewController;
 @property (nonatomic, assign) BOOL interactive;
 @property (nonatomic, assign) BOOL presenting;
+@property (nonatomic, assign) CGFloat lastPercentComplete;
 
 @end
 
@@ -170,7 +171,7 @@ static const CGFloat AnimationDuration = 0.35f;
 
 - (CGFloat)completionSpeed
 {
-    return  1.0f - self.percentComplete;
+    return [self transitionDuration:self.transitionContext] * (1.0f - self.lastPercentComplete);
 }
 
 - (void)startInteractiveTransition:(id<UIViewControllerContextTransitioning>)transitionContext
@@ -182,6 +183,8 @@ static const CGFloat AnimationDuration = 0.35f;
 
 - (void)updateInteractiveTransition:(CGFloat)percentComplete
 {
+    self.lastPercentComplete = percentComplete;
+    
     id<UIViewControllerContextTransitioning> transitionContext = self.transitionContext;
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
     
@@ -208,7 +211,7 @@ static const CGFloat AnimationDuration = 0.35f;
     
     } completion:^(BOOL finished) {
     
-        [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+        [transitionContext completeTransition:YES];
         
     }];
 }
@@ -226,7 +229,7 @@ static const CGFloat AnimationDuration = 0.35f;
     
     } completion:^(BOOL finished) {
     
-        [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+        [transitionContext completeTransition:NO];
         
     }];
 }
