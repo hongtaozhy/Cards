@@ -152,6 +152,8 @@ static const CGFloat AnimationDuration = 0.35f;
     else if (recognizer.state == UIGestureRecognizerStateChanged)
     {
         CGFloat percent = translation.y / recognizer.view.bounds.size.height;
+        percent = fmaxf(0.0f, percent);
+        percent = fminf(1.0f, percent);
         [self updateInteractiveTransition:percent];
     }
     else if (recognizer.state == UIGestureRecognizerStateEnded)
