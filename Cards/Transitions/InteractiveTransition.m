@@ -8,15 +8,15 @@
 
 #import "InteractiveTransition.h"
 
-static const CGFloat AnimationDuration = 0.35f;
+static const CGFloat AnimationDuration = 0.30f;
 
 @interface InteractiveTransition () <UIViewControllerAnimatedTransitioning, UIViewControllerInteractiveTransitioning>
 
 @property (nonatomic, strong) id<UIViewControllerContextTransitioning> transitionContext;
 @property (nonatomic, weak) UIViewController *viewController;
-@property (nonatomic, assign) BOOL interactive;
-@property (nonatomic, assign) BOOL presenting;
-@property (nonatomic, assign) CGFloat lastPercentComplete;
+@property (nonatomic, assign, getter = isInteractive) BOOL interactive;
+@property (nonatomic, assign, getter = isPresenting) BOOL presenting;
+@property (nonatomic, assign) CGFloat lastPercentComplete; // We shouldn't need this, but self.percentComplete is always 0 [AH]
 
 @end
 
@@ -51,7 +51,7 @@ static const CGFloat AnimationDuration = 0.35f;
 
 - (id <UIViewControllerInteractiveTransitioning>)interactionControllerForPresentation:(id <UIViewControllerAnimatedTransitioning>)animator
 {
-    if (self.interactive)
+    if (self.isInteractive)
     {
         return self;
     }
@@ -61,25 +61,12 @@ static const CGFloat AnimationDuration = 0.35f;
 
 - (id <UIViewControllerInteractiveTransitioning>)interactionControllerForDismissal:(id <UIViewControllerAnimatedTransitioning>)animator
 {
-    if (self.interactive)
+    if (self.isInteractive)
     {
         return self;
     }
     
     return nil;
-}
-
-#pragma mark - Transitioning
-
-- (void)animationEnded:(BOOL)transitionCompleted
-{
-    self.interactive = NO;
-    self.presenting = NO;
-    if (self.interactive)
-    {
-        self.viewController = nil;
-    }
-    self.transitionContext = nil;
 }
 
 #pragma mark - Animated Transitioning
@@ -93,23 +80,19 @@ static const CGFloat AnimationDuration = 0.35f;
 {
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
     UIViewController *toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
+    UIView *containerView = transitionContext.containerView;
     
-    if (self.presenting)
+    if (self.isPresenting)
     {
-        CGRect endFrame = fromViewController.view.frame;
-        
-        CGRect startFrame = endFrame;
-        startFrame.origin.y += fromViewController.view.bounds.size.height;
-        
         fromViewController.view.userInteractionEnabled = NO;
-        toViewController.view.frame = startFrame;
-        
-        [transitionContext.containerView addSubview:toViewController.view];
-        
+
+        toViewController.view.frame = [self rectForDismissedState:transitionContext];
+        [containerView addSubview:toViewController.view];
+
         [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
             
             fromViewController.view.tintAdjustmentMode = UIViewTintAdjustmentModeDimmed;
-            toViewController.view.frame = endFrame;
+            toViewController.view.frame = [self rectForPresentedState:transitionContext];
             
         } completion:^(BOOL finished) {
             
@@ -121,23 +104,44 @@ static const CGFloat AnimationDuration = 0.35f;
     {
         toViewController.view.userInteractionEnabled = YES;
         
-        CGRect endFrame = fromViewController.view.frame;
-        endFrame.origin.y += fromViewController.view.frame.size.height;
-        
         [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
             
             toViewController.view.tintAdjustmentMode = UIViewTintAdjustmentModeAutomatic;
-            fromViewController.view.frame = endFrame;
+            fromViewController.view.frame = [self rectForDismissedState:transitionContext];
             
         } completion:^(BOOL finished) {
             
             [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+            [fromViewController.view.superview removeFromSuperview];
             
         }];
     }
 }
 
-#pragma mark - Gesture Recognizer
+- (void)animationEnded:(BOOL)transitionCompleted
+{
+    self.interactive = NO;
+    self.presenting = NO;
+    if (self.isInteractive)
+    {
+        self.viewController = nil;
+    }
+    self.transitionContext = nil;
+}
+
+#pragma mark - Interactive Transitioning
+
+- (CGFloat)completionSpeed
+{
+    return [self transitionDuration:self.transitionContext] * (1.0f - self.lastPercentComplete);
+}
+
+- (void)startInteractiveTransition:(id<UIViewControllerContextTransitioning>)transitionContext
+{
+    self.transitionContext = transitionContext;
+}
+
+#pragma mark - Percent Driven Gesture
 
 - (void)didPan:(UIPanGestureRecognizer *)recognizer
 {
@@ -152,7 +156,7 @@ static const CGFloat AnimationDuration = 0.35f;
     else if (recognizer.state == UIGestureRecognizerStateChanged)
     {
         CGFloat percent = translation.y / recognizer.view.bounds.size.height;
-        percent = fmaxf(0.0f, percent);
+        percent = fmaxf(0.0f, percent); // Clamp values in the event of fast pan
         percent = fminf(1.0f, percent);
         [self updateInteractiveTransition:percent];
     }
@@ -169,20 +173,6 @@ static const CGFloat AnimationDuration = 0.35f;
     }
 }
 
-#pragma mark - Interactive Transitioning
-
-- (CGFloat)completionSpeed
-{
-    return [self transitionDuration:self.transitionContext] * (1.0f - self.lastPercentComplete);
-}
-
-- (void)startInteractiveTransition:(id<UIViewControllerContextTransitioning>)transitionContext
-{
-    self.transitionContext = transitionContext;
-}
-
-#pragma mark
-
 - (void)updateInteractiveTransition:(CGFloat)percentComplete
 {
     self.lastPercentComplete = percentComplete;
@@ -190,9 +180,7 @@ static const CGFloat AnimationDuration = 0.35f;
     id<UIViewControllerContextTransitioning> transitionContext = self.transitionContext;
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
     
-    CGRect bounds = transitionContext.containerView.bounds;
-    bounds = CGRectOffset(bounds, 0, CGRectGetHeight(bounds) * percentComplete);
-    fromViewController.view.frame = bounds;
+    fromViewController.view.frame = [self rectForPresentedState:transitionContext percentComplete:percentComplete];
 }
 
 - (void)finishInteractiveTransition
@@ -204,12 +192,9 @@ static const CGFloat AnimationDuration = 0.35f;
     toViewController.view.userInteractionEnabled = YES;
     toViewController.view.tintAdjustmentMode = UIViewTintAdjustmentModeAutomatic;
 
-    CGRect endFrame = transitionContext.containerView.bounds;
-    endFrame.origin.y += endFrame.size.height;
-
     [UIView animateWithDuration:[self completionSpeed] animations:^{
    
-        fromViewController.view.frame = endFrame;
+        fromViewController.view.frame = [self rectForDismissedState:transitionContext];
     
     } completion:^(BOOL finished) {
     
@@ -223,11 +208,9 @@ static const CGFloat AnimationDuration = 0.35f;
     id<UIViewControllerContextTransitioning> transitionContext = self.transitionContext;
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
     
-    CGRect endFrame = transitionContext.containerView.bounds;
-
     [UIView animateWithDuration:[self completionSpeed] animations:^{
     
-        fromViewController.view.frame = endFrame;
+        fromViewController.view.frame = [self rectForPresentedState:transitionContext];
     
     } completion:^(BOOL finished) {
     
@@ -236,5 +219,144 @@ static const CGFloat AnimationDuration = 0.35f;
     }];
 }
 
+#pragma mark - Utilities
+
+// These are necessary because containerView is always portrait orientation (doesn't respect rotation changes)
+// http://stackoverflow.com/questions/20013929/workaround-for-custom-uiviewcontroller-animations-in-landscape
+// http://www.brightec.co.uk/blog/ios-7-custom-view-controller-transitions-and-rotation-making-it-all-work
+
+- (CGRect)rectForDismissedState:(id<UIViewControllerContextTransitioning>)transitionContext
+{
+    UIView *containerView = [transitionContext containerView];
+    UIViewController *fromViewController = nil;
+    
+    if (self.isPresenting)
+    {
+        fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
+    }
+    else
+    {
+        fromViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
+    }
+    
+    CGRect frame = CGRectZero;
+    
+    switch (fromViewController.interfaceOrientation)
+    {
+        case UIInterfaceOrientationLandscapeRight:
+            frame = CGRectMake(-containerView.bounds.size.width,
+                              0,
+                              containerView.bounds.size.width,
+                              containerView.bounds.size.height);
+            break;
+          
+        case UIInterfaceOrientationLandscapeLeft:
+            frame = CGRectMake(containerView.bounds.size.width,
+                              0,
+                              containerView.bounds.size.width,
+                              containerView.bounds.size.height);
+            break;
+            
+        case UIInterfaceOrientationPortraitUpsideDown:
+            frame = CGRectMake(0,
+                              -containerView.bounds.size.height,
+                              containerView.bounds.size.width,
+                              containerView.bounds.size.height);
+            break;
+            
+        case UIInterfaceOrientationPortrait:
+            frame = CGRectMake(0,
+                              containerView.bounds.size.height,
+                              containerView.bounds.size.width,
+                              containerView.bounds.size.height);
+            break;
+
+        default:
+            break;
+    }
+    
+    return frame;
+}
+
+
+- (CGRect)rectForPresentedState:(id<UIViewControllerContextTransitioning>)transitionContext
+{
+    UIView *containerView = [transitionContext containerView];
+    UIViewController *fromViewController = nil;
+
+    if (self.isPresenting)
+    {
+        fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
+    }
+    else
+    {
+        fromViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
+    }
+    
+    CGRect frame = CGRectZero;
+    
+    switch (fromViewController.interfaceOrientation)
+    {
+        case UIInterfaceOrientationLandscapeRight:
+            frame = CGRectOffset([self rectForDismissedState:transitionContext], containerView.bounds.size.width, 0);
+            break;
+
+        case UIInterfaceOrientationLandscapeLeft:
+            frame = CGRectOffset([self rectForDismissedState:transitionContext], -1.0f * containerView.bounds.size.width, 0);
+            break;
+        
+        case UIInterfaceOrientationPortraitUpsideDown:
+            frame = CGRectOffset([self rectForDismissedState:transitionContext], 0, containerView.bounds.size.height);
+            break;
+        
+        case UIInterfaceOrientationPortrait:
+            frame = CGRectOffset([self rectForDismissedState:transitionContext], 0, -1.0f * containerView.bounds.size.height);
+            break;
+            
+        default:
+            break;
+    }
+    
+    return frame;
+}
+
+- (CGRect)rectForPresentedState:(id<UIViewControllerContextTransitioning>)transitionContext percentComplete:(CGFloat)percentComplete
+{
+    UIViewController *fromViewController = nil;
+    if (self.isPresenting)
+    {
+        fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
+    }
+    else
+    {
+        fromViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
+    }
+
+    CGRect frame = [self rectForPresentedState:transitionContext];
+
+    switch (fromViewController.interfaceOrientation)
+    {
+        case UIInterfaceOrientationLandscapeRight:
+            frame = CGRectOffset(frame, -1.0f * CGRectGetWidth(frame) * percentComplete, 0.0f);
+            break;
+            
+        case UIInterfaceOrientationLandscapeLeft:
+            frame = CGRectOffset(frame, CGRectGetWidth(frame) * percentComplete, 0.0f);
+            break;
+            
+        case UIInterfaceOrientationPortraitUpsideDown:
+            frame = CGRectOffset(frame, 0.0f, -1.0f * CGRectGetHeight(frame) * percentComplete);
+            break;
+            
+        case UIInterfaceOrientationPortrait:
+            frame = CGRectOffset(frame, 0.0f, CGRectGetHeight(frame) * percentComplete);
+            break;
+            
+        default:
+            break;
+    }
+    
+    return frame;
+}
 
 @end

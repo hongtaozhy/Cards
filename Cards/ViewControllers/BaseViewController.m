@@ -43,6 +43,30 @@
     // Dispose of any resources that can be recreated.
 }
 
+#pragma mark - Rotation
+
+- (BOOL)shouldAutorotate
+{
+    BOOL shouldAllowRotation = YES;
+    
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone)
+    {
+        shouldAllowRotation = NO;
+    }
+    
+    return shouldAllowRotation;
+}
+
+- (NSUInteger)supportedInterfaceOrientations
+{
+    return UIInterfaceOrientationMaskAll;
+}
+
+- (UIInterfaceOrientation)preferredInterfaceOrientationForPresentation
+{
+    return UIInterfaceOrientationPortrait;
+}
+
 #pragma mark
 
 - (IBAction)didTapButton:(id)sender
