@@ -1,16 +1,16 @@
-
-//  InteractiveTransition.m
+//
+//  DynamicInteractiveTransition.m
 //  Cards
 //
-//  Created by Alfred Hanssen on 3/23/14.
+//  Created by Hanssen, Alfie on 3/26/14.
 //  Copyright (c) 2014 Alfred Hanssen. All rights reserved.
 //
 
-#import "InteractiveTransition.h"
+#import "DynamicInteractiveTransition.h"
 
 static const CGFloat AnimationDuration = 0.30f;
 
-@interface InteractiveTransition () <UIViewControllerAnimatedTransitioning, UIViewControllerInteractiveTransitioning>
+@interface DynamicInteractiveTransition () <UIViewControllerAnimatedTransitioning, UIViewControllerInteractiveTransitioning, UIDynamicAnimatorDelegate>
 
 @property (nonatomic, strong) id<UIViewControllerContextTransitioning> transitionContext;
 @property (nonatomic, weak) UIViewController *viewController;
@@ -18,9 +18,11 @@ static const CGFloat AnimationDuration = 0.30f;
 @property (nonatomic, assign, getter = isPresenting) BOOL presenting;
 @property (nonatomic, assign) CGFloat lastPercentComplete; // We shouldn't need this, but self.percentComplete is always 0 [AH]
 
+@property (nonatomic, strong) UIDynamicAnimator *animator;
+
 @end
 
-@implementation InteractiveTransition
+@implementation DynamicInteractiveTransition
 
 - (instancetype)initWithViewController:(UIViewController *)viewController
 {
@@ -82,39 +84,70 @@ static const CGFloat AnimationDuration = 0.30f;
     UIViewController *toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
     UIView *containerView = transitionContext.containerView;
     
+    self.animator = [[UIDynamicAnimator alloc] initWithReferenceView:transitionContext.containerView];
+    self.animator.delegate = self;
+    
     if (self.isPresenting)
     {
         fromViewController.view.userInteractionEnabled = NO;
-
+        
         toViewController.view.frame = [self rectForDismissedState:transitionContext];
         [containerView addSubview:toViewController.view];
-
-        [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
-            
-            fromViewController.view.tintAdjustmentMode = UIViewTintAdjustmentModeDimmed;
-            toViewController.view.frame = [self rectForPresentedState:transitionContext];
-            
-        } completion:^(BOOL finished) {
-            
-            [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-            
-        }];
+        
+        
+        UICollisionBehavior *collisionBehaviour = [[UICollisionBehavior alloc] initWithItems:@[toViewController.view]];
+        [collisionBehaviour setTranslatesReferenceBoundsIntoBoundaryWithInsets:UIEdgeInsetsMake(0, -1.0f * CGRectGetWidth(transitionContext.containerView.bounds), 0, 0)];
+        
+        UIGravityBehavior *gravityBehaviour = [[UIGravityBehavior alloc] initWithItems:@[toViewController.view]];
+        gravityBehaviour.gravityDirection = CGVectorMake(0.0f, 5.0f);
+        
+        UIDynamicItemBehavior *itemBehaviour = [[UIDynamicItemBehavior alloc] initWithItems:@[toViewController.view]];
+        itemBehaviour.elasticity = 0.5f;
+        
+        [self.animator addBehavior:collisionBehaviour];
+        [self.animator addBehavior:gravityBehaviour];
+        [self.animator addBehavior:itemBehaviour];
+        
+//        
+//        [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
+//            
+//            fromViewController.view.tintAdjustmentMode = UIViewTintAdjustmentModeDimmed;
+//            toViewController.view.frame = [self rectForPresentedState:transitionContext];
+//            
+//        } completion:^(BOOL finished) {
+//            
+//            [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+//            
+//        }];
     }
     else
     {
         toViewController.view.userInteractionEnabled = YES;
+
+        UICollisionBehavior *collisionBehaviour = [[UICollisionBehavior alloc] initWithItems:@[fromViewController.view]];
+        [collisionBehaviour setTranslatesReferenceBoundsIntoBoundaryWithInsets:UIEdgeInsetsMake(0, -CGRectGetWidth(transitionContext.containerView.bounds), 0, 0)];
         
-        [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
-            
-            toViewController.view.tintAdjustmentMode = UIViewTintAdjustmentModeAutomatic;
-            fromViewController.view.frame = [self rectForDismissedState:transitionContext];
-            
-        } completion:^(BOOL finished) {
-            
-            [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-            [fromViewController.view.superview removeFromSuperview];
-            
-        }];
+        UIGravityBehavior *gravityBehaviour = [[UIGravityBehavior alloc] initWithItems:@[fromViewController.view]];
+        gravityBehaviour.gravityDirection = CGVectorMake(0.0f, -5.0f);
+        
+        UIDynamicItemBehavior *itemBehaviour = [[UIDynamicItemBehavior alloc] initWithItems:@[fromViewController.view]];
+        itemBehaviour.elasticity = 0.5f;
+        
+        [self.animator addBehavior:collisionBehaviour];
+        [self.animator addBehavior:gravityBehaviour];
+        [self.animator addBehavior:itemBehaviour];
+        
+//        [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
+//            
+//            toViewController.view.tintAdjustmentMode = UIViewTintAdjustmentModeAutomatic;
+//            fromViewController.view.frame = [self rectForDismissedState:transitionContext];
+//            
+//        } completion:^(BOOL finished) {
+//            
+//            [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
+//            [fromViewController.view.superview removeFromSuperview];
+//            
+//        }];
     }
 }
 
@@ -129,11 +162,22 @@ static const CGFloat AnimationDuration = 0.30f;
     
     self.interactive = NO;
     self.presenting = NO;
-    if (self.isInteractive)
-    {
-        self.viewController = nil;
-    }
+    self.viewController = nil;
     self.transitionContext = nil;
+    
+    [self.animator removeAllBehaviors];
+    self.animator.delegate = nil;
+    self.animator = nil;
+}
+
+#pragma mark - UIDynamicAnimatorDelegate Methods
+
+- (void)dynamicAnimatorDidPause:(UIDynamicAnimator *)animator
+{
+//    if (!self.interactiveTransitionInteracting)
+//    {
+        [self.transitionContext completeTransition:![self.transitionContext transitionWasCancelled]];
+//    }
 }
 
 #pragma mark - Interactive Transitioning
@@ -194,17 +238,17 @@ static const CGFloat AnimationDuration = 0.30f;
 {
     id<UIViewControllerContextTransitioning> transitionContext = self.transitionContext;
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
-
+    
     UIViewController *toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
     toViewController.view.userInteractionEnabled = YES;
     toViewController.view.tintAdjustmentMode = UIViewTintAdjustmentModeAutomatic;
-
+    
     [UIView animateWithDuration:[self completionSpeed] animations:^{
-   
+        
         fromViewController.view.frame = [self rectForDismissedState:transitionContext];
-    
+        
     } completion:^(BOOL finished) {
-    
+        
         [transitionContext completeTransition:YES];
         
     }];
@@ -216,11 +260,11 @@ static const CGFloat AnimationDuration = 0.30f;
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
     
     [UIView animateWithDuration:[self completionSpeed] animations:^{
-    
+        
         fromViewController.view.frame = [self rectForPresentedState:transitionContext];
-    
+        
     } completion:^(BOOL finished) {
-    
+        
         [transitionContext completeTransition:NO];
         
     }];
@@ -252,32 +296,32 @@ static const CGFloat AnimationDuration = 0.30f;
     {
         case UIInterfaceOrientationLandscapeRight:
             frame = CGRectMake(-containerView.bounds.size.width,
-                              0,
-                              containerView.bounds.size.width,
-                              containerView.bounds.size.height);
+                               0,
+                               containerView.bounds.size.width,
+                               containerView.bounds.size.height);
             break;
-          
+            
         case UIInterfaceOrientationLandscapeLeft:
             frame = CGRectMake(containerView.bounds.size.width,
-                              0,
-                              containerView.bounds.size.width,
-                              containerView.bounds.size.height);
+                               0,
+                               containerView.bounds.size.width,
+                               containerView.bounds.size.height);
             break;
             
         case UIInterfaceOrientationPortraitUpsideDown:
             frame = CGRectMake(0,
-                              -containerView.bounds.size.height,
-                              containerView.bounds.size.width,
-                              containerView.bounds.size.height);
+                               -containerView.bounds.size.height,
+                               containerView.bounds.size.width,
+                               containerView.bounds.size.height);
             break;
             
         case UIInterfaceOrientationPortrait:
             frame = CGRectMake(0,
-                              containerView.bounds.size.height,
-                              containerView.bounds.size.width,
-                              containerView.bounds.size.height);
+                               containerView.bounds.size.height,
+                               containerView.bounds.size.width,
+                               containerView.bounds.size.height);
             break;
-
+            
         default:
             break;
     }
@@ -290,7 +334,7 @@ static const CGFloat AnimationDuration = 0.30f;
 {
     UIView *containerView = [transitionContext containerView];
     UIViewController *fromViewController = nil;
-
+    
     if (self.isPresenting)
     {
         fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
@@ -307,15 +351,15 @@ static const CGFloat AnimationDuration = 0.30f;
         case UIInterfaceOrientationLandscapeRight:
             frame = CGRectOffset([self rectForDismissedState:transitionContext], containerView.bounds.size.width, 0);
             break;
-
+            
         case UIInterfaceOrientationLandscapeLeft:
             frame = CGRectOffset([self rectForDismissedState:transitionContext], -1.0f * containerView.bounds.size.width, 0);
             break;
-        
+            
         case UIInterfaceOrientationPortraitUpsideDown:
             frame = CGRectOffset([self rectForDismissedState:transitionContext], 0, containerView.bounds.size.height);
             break;
-        
+            
         case UIInterfaceOrientationPortrait:
             frame = CGRectOffset([self rectForDismissedState:transitionContext], 0, -1.0f * containerView.bounds.size.height);
             break;
@@ -338,9 +382,9 @@ static const CGFloat AnimationDuration = 0.30f;
     {
         fromViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
     }
-
+    
     CGRect frame = [self rectForPresentedState:transitionContext];
-
+    
     switch (fromViewController.interfaceOrientation)
     {
         case UIInterfaceOrientationLandscapeRight:
