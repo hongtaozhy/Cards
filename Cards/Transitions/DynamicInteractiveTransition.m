@@ -8,7 +8,7 @@
 
 #import "DynamicInteractiveTransition.h"
 
-static const CGFloat AnimationDuration = 0.30f;
+static const CGFloat AnimationDuration = 0.25f;
 static const CGFloat Gravity = 20.0f;
 static const CGFloat Elasticity = 0.15f;
 
@@ -93,7 +93,6 @@ static const CGFloat Elasticity = 0.15f;
     
     if (self.isPresenting)
     {
-        fromViewController.view.userInteractionEnabled = NO;
         dynamicViewController = toViewController;
         
         toViewController.view.frame = [self rectForDismissedState:transitionContext];
@@ -103,7 +102,6 @@ static const CGFloat Elasticity = 0.15f;
     }
     else
     {
-        toViewController.view.userInteractionEnabled = YES;
         dynamicViewController = fromViewController;
         
 //        fromViewController.view.frame = [self rectForDismissedState:transitionContext];
@@ -131,9 +129,10 @@ static const CGFloat Elasticity = 0.15f;
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
     UIViewController *toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
     
+    // TODO: Figure out if userInteractionEnabled should be used
     fromViewController.view.userInteractionEnabled = YES;
     toViewController.view.userInteractionEnabled = YES;
-        
+    
     self.interactive = NO;
     self.presenting = NO;
     self.transitionContext = nil;
@@ -212,8 +211,8 @@ static const CGFloat Elasticity = 0.15f;
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
     
     UIViewController *toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
-    toViewController.view.userInteractionEnabled = YES;
     toViewController.view.tintAdjustmentMode = UIViewTintAdjustmentModeAutomatic;
+    // TODO: figure out if tintAdjustmentMode should be used
     
     [UIView animateWithDuration:[self completionSpeed] animations:^{
         
