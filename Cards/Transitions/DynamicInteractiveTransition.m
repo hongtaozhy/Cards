@@ -17,6 +17,7 @@ static const CGFloat Elasticity = 0.15f;
 @property (nonatomic, strong) id<UIViewControllerContextTransitioning> transitionContext;
 @property (nonatomic, weak) UIViewController *viewController;
 @property (nonatomic, assign, getter = isInteractive) BOOL interactive;
+@property (nonatomic, assign, getter = isInteractiveTransitionInProgress) BOOL interactiveTransitionInProgress;
 @property (nonatomic, assign, getter = isPresenting) BOOL presenting;
 @property (nonatomic, assign) CGFloat lastPercentComplete; // We shouldn't need this, but self.percentComplete is always 0 [AH]
 
@@ -135,9 +136,14 @@ static const CGFloat Elasticity = 0.15f;
     fromViewController.view.userInteractionEnabled = YES;
     toViewController.view.userInteractionEnabled = YES;
     
+    if (self.isInteractive)
+    {
+        self.viewController = nil;
+    }
+
     self.interactive = NO;
     self.presenting = NO;
-    self.viewController = nil;
+    self.interactiveTransitionInProgress = NO;
     self.transitionContext = nil;
     
     [self.animator removeAllBehaviors];
@@ -145,14 +151,19 @@ static const CGFloat Elasticity = 0.15f;
     self.animator = nil;
 }
 
+- (void)end
+{
+    
+}
+
 #pragma mark - UIDynamicAnimatorDelegate Methods
 
 - (void)dynamicAnimatorDidPause:(UIDynamicAnimator *)animator
 {
-//    if (!self.interactiveTransitionInteracting)
-//    {
+    if (!self.isInteractiveTransitionInProgress)
+    {
         [self.transitionContext completeTransition:![self.transitionContext transitionWasCancelled]];
-//    }
+    }
 }
 
 #pragma mark - Interactive Transitioning
@@ -165,6 +176,7 @@ static const CGFloat Elasticity = 0.15f;
 - (void)startInteractiveTransition:(id<UIViewControllerContextTransitioning>)transitionContext
 {
     self.transitionContext = transitionContext;
+    self.interactiveTransitionInProgress = YES;
     
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
     UIViewController *toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
@@ -172,26 +184,14 @@ static const CGFloat Elasticity = 0.15f;
     self.animator = [[UIDynamicAnimator alloc] initWithReferenceView:transitionContext.containerView];
     self.animator.delegate = self;
     
-    id<UIDynamicItem> dynamicItem;
-    CGPoint anchor = CGPointZero;
-    
-    if (self.isPresenting)
-    {
-        dynamicItem = toViewController.view;
-        anchor = CGPointMake(0.0f, CGRectGetMidX(transitionContext.containerView.bounds));
-    }
-    else
-    {
-        dynamicItem = fromViewController.view;
-        anchor = CGPointMake(CGRectGetWidth(transitionContext.containerView.bounds), CGRectGetMidY(transitionContext.containerView.bounds));
-    }
+    toViewController.view.userInteractionEnabled = YES;
 
-    self.attachmentBehavior = [[UIAttachmentBehavior alloc] initWithItem:dynamicItem attachedToAnchor:anchor];
+    self.attachmentBehavior = [[UIAttachmentBehavior alloc] initWithItem:fromViewController.view attachedToAnchor:[self anchorPointForDismissal:transitionContext percentComplete:0.0f]];
 
-    UICollisionBehavior *collisionBehaviour = [[UICollisionBehavior alloc] initWithItems:@[dynamicItem]];
-    [collisionBehaviour setTranslatesReferenceBoundsIntoBoundaryWithInsets:UIEdgeInsetsMake(0, -CGRectGetWidth(transitionContext.containerView.bounds), 0, 0)];
+    UICollisionBehavior *collisionBehaviour = [[UICollisionBehavior alloc] initWithItems:@[fromViewController.view]];
+    [collisionBehaviour setTranslatesReferenceBoundsIntoBoundaryWithInsets:[self collisionInsets:transitionContext]];
     
-    UIDynamicItemBehavior *itemBehaviour = [[UIDynamicItemBehavior alloc] initWithItems:@[dynamicItem]];
+    UIDynamicItemBehavior *itemBehaviour = [[UIDynamicItemBehavior alloc] initWithItems:@[fromViewController.view]];
     itemBehaviour.elasticity = Elasticity;
     
     [self.animator addBehavior:collisionBehaviour];
@@ -235,46 +235,55 @@ static const CGFloat Elasticity = 0.15f;
 {
     self.lastPercentComplete = percentComplete;
     
-    id<UIViewControllerContextTransitioning> transitionContext = self.transitionContext;
-    UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
-    
-    fromViewController.view.frame = [self rectForPresentedState:transitionContext percentComplete:percentComplete];
+    self.attachmentBehavior.anchorPoint = [self anchorPointForDismissal:self.transitionContext percentComplete:percentComplete];
 }
 
 - (void)finishInteractiveTransition
 {
+    self.interactiveTransitionInProgress = NO;
+
     id<UIViewControllerContextTransitioning> transitionContext = self.transitionContext;
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
+
+    [self.animator removeBehavior:self.attachmentBehavior];
     
-    UIViewController *toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
-    toViewController.view.userInteractionEnabled = YES;
-    toViewController.view.tintAdjustmentMode = UIViewTintAdjustmentModeAutomatic;
+    UIGravityBehavior *gravityBehaviour = [[UIGravityBehavior alloc] initWithItems:@[fromViewController.view]];
+    gravityBehaviour.gravityDirection = [self gravityVector:transitionContext];
+
+    [self.animator addBehavior:gravityBehaviour];
     
-    [UIView animateWithDuration:[self completionSpeed] animations:^{
-        
-        fromViewController.view.frame = [self rectForDismissedState:transitionContext];
-        
-    } completion:^(BOOL finished) {
-        
-        [transitionContext completeTransition:YES];
-        
-    }];
+
+    
+//    [UIView animateWithDuration:[self completionSpeed] animations:^{
+//        
+//        fromViewController.view.frame = [self rectForDismissedState:transitionContext];
+//        
+//    } completion:^(BOOL finished) {
+//        
+//        [transitionContext completeTransition:YES];
+//        
+//    }];
 }
 
 - (void)cancelInteractiveTransition
 {
-    id<UIViewControllerContextTransitioning> transitionContext = self.transitionContext;
-    UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
+    self.interactiveTransitionInProgress = NO;
+
+//    id<UIViewControllerContextTransitioning> transitionContext = self.transitionContext;
+//    UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
+
     
-    [UIView animateWithDuration:[self completionSpeed] animations:^{
-        
-        fromViewController.view.frame = [self rectForPresentedState:transitionContext];
-        
-    } completion:^(BOOL finished) {
-        
-        [transitionContext completeTransition:NO];
-        
-    }];
+    
+    
+//    [UIView animateWithDuration:[self completionSpeed] animations:^{
+//        
+//        fromViewController.view.frame = [self rectForPresentedState:transitionContext];
+//        
+//    } completion:^(BOOL finished) {
+//        
+//        [transitionContext completeTransition:NO];
+//        
+//    }];
 }
 
 #pragma mark - Utilities
@@ -430,7 +439,6 @@ static const CGFloat Elasticity = 0.15f;
         insets = [self collisionInsetsForDismissal:transitionContext];
     }
 
-    NSLog(@"INSETS %@", NSStringFromUIEdgeInsets(insets));
     return insets;
 }
 
@@ -507,7 +515,6 @@ static const CGFloat Elasticity = 0.15f;
         vector = [self gravityVectorForDismissal:transitionContext];
     }
     
-    NSLog(@"GRAVITY %.2f, %.2f", vector.dx, vector.dy);
     return vector;
 }
 
@@ -569,6 +576,39 @@ static const CGFloat Elasticity = 0.15f;
     }
     
     return vector;
+}
+
+- (CGPoint)anchorPointForDismissal:(id<UIViewControllerContextTransitioning>)transitionContext percentComplete:(CGFloat)percentComplete
+{
+    CGPoint point = CGPointZero;
+    UIViewController *viewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
+    
+//    CGPoint anchor = CGPointMake(CGRectGetWidth(transitionContext.containerView.bounds), CGRectGetMidY(transitionContext.containerView.bounds));
+
+    switch (viewController.interfaceOrientation)
+    {
+        case UIInterfaceOrientationLandscapeRight:
+            point = (CGPoint){0, 0};
+            break;
+            
+        case UIInterfaceOrientationLandscapeLeft:
+            point = (CGPoint){0, 0};
+            break;
+            
+        case UIInterfaceOrientationPortraitUpsideDown:
+            point = (CGPoint){0, 0};
+            break;
+            
+        case UIInterfaceOrientationPortrait:
+            point = (CGPoint){CGRectGetMidX(transitionContext.containerView.bounds), percentComplete * CGRectGetHeight(transitionContext.containerView.bounds)};
+            break;
+            
+        default:
+            break;
+    }
+    
+    NSLog(@"ANCHOR %@", NSStringFromCGPoint(point));
+    return point;
 }
 
 @end
