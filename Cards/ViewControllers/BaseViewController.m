@@ -9,10 +9,12 @@
 #import "BaseViewController.h"
 #import "FirstViewController.h"
 #import "InteractiveTransition.h"
+#import "DynamicInteractiveTransition.h"
+#import "CardStyle.h"
 
 @interface BaseViewController ()
 
-@property (nonatomic, strong) InteractiveTransition *interactiveTransition;
+@property (nonatomic, strong) id interactiveTransition;
 
 @end
 
@@ -30,6 +32,21 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+#ifdef AMH_USE_DYNAMICS
+    
+    self.interactiveTransition = [[DynamicInteractiveTransition alloc] initWithViewController:self];
+
+#else
+
+    self.interactiveTransition = [[InteractiveTransition alloc] initWithViewController:self];
+
+#endif
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -73,7 +90,6 @@
 {
     FirstViewController *viewController = [[FirstViewController alloc] initWithNibName:@"FirstViewController" bundle:nil];
     viewController.modalPresentationStyle = UIModalPresentationCustom;
-    self.interactiveTransition = [[InteractiveTransition alloc] initWithViewController:self];
     viewController.transitioningDelegate = self.interactiveTransition;
     
     [self presentViewController:viewController animated:YES completion:nil];

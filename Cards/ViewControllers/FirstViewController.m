@@ -9,12 +9,13 @@
 #import "FirstViewController.h"
 #import "SecondViewController.h"
 #import "InteractiveTransition.h"
+#import "DynamicInteractiveTransition.h"
 #import "CardStyle.h"
 
 @interface FirstViewController ()
 
 @property (nonatomic, weak) IBOutlet UIView *contentView;
-@property (nonatomic, strong) InteractiveTransition *interactiveTransition;
+@property (nonatomic, strong) id interactiveTransition;
 
 @end
 
@@ -33,8 +34,28 @@
 {
     [super viewDidLoad];
     
+#ifdef AMH_USE_DYNAMICS
+
+    self.interactiveTransition = [[DynamicInteractiveTransition alloc] initWithViewController:self];
+
+#else
+    
+    self.interactiveTransition = [[InteractiveTransition alloc] initWithViewController:self];
+    
+#endif
+
     [self setupGestureRecognizers];
     [self setupContentView];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
 }
 
 - (void)didReceiveMemoryWarning
@@ -104,7 +125,6 @@
 {
     SecondViewController *viewController = [[SecondViewController alloc] initWithNibName:@"SecondViewController" bundle:nil];
     viewController.modalPresentationStyle = UIModalPresentationCustom;
-    self.interactiveTransition = [[InteractiveTransition alloc] initWithViewController:self];
     viewController.transitioningDelegate = self.interactiveTransition;
 
     [self presentViewController:viewController animated:YES completion:nil];
