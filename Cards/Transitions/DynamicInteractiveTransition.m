@@ -99,16 +99,14 @@ static const CGFloat Elasticity = 0.15f;
         toViewController.view.frame = [self rectForDismissedState:transitionContext];
         [transitionContext.containerView addSubview:toViewController.view];
         
-        //            toViewController.view.frame = [self rectForPresentedState:transitionContext];
+//        toViewController.view.frame = [self rectForPresentedState:transitionContext];
     }
     else
     {
         toViewController.view.userInteractionEnabled = YES;
         dynamicViewController = fromViewController;
         
-        //            fromViewController.view.frame = [self rectForDismissedState:transitionContext];
-        //            [transitionContext completeTransition:![transitionContext transitionWasCancelled]];
-        //            [fromViewController.view.superview removeFromSuperview];
+//        fromViewController.view.frame = [self rectForDismissedState:transitionContext];
     }
     
     UICollisionBehavior *collisionBehaviour = [[UICollisionBehavior alloc] initWithItems:@[dynamicViewController.view]];
@@ -127,18 +125,15 @@ static const CGFloat Elasticity = 0.15f;
 
 - (void)animationEnded:(BOOL)transitionCompleted
 {
-    id<UIViewControllerContextTransitioning> transitionContext = self.transitionContext;
+    NSLog(@"ANIMATION ENDED");
+    
+   id<UIViewControllerContextTransitioning> transitionContext = self.transitionContext;
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
     UIViewController *toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
     
     fromViewController.view.userInteractionEnabled = YES;
     toViewController.view.userInteractionEnabled = YES;
-    
-    if (self.isInteractive)
-    {
-        self.viewController = nil;
-    }
-    
+        
     self.interactive = NO;
     self.presenting = NO;
     self.transitionContext = nil;
@@ -152,6 +147,7 @@ static const CGFloat Elasticity = 0.15f;
 
 - (void)dynamicAnimatorDidPause:(UIDynamicAnimator *)animator
 {
+    NSLog(@"ANIMATION PAUSE");
     [self.transitionContext completeTransition:![self.transitionContext transitionWasCancelled]];
 }
 
@@ -159,6 +155,7 @@ static const CGFloat Elasticity = 0.15f;
 
 - (CGFloat)completionSpeed
 {
+    NSLog(@"COMPLETEION SPEED %.2f", [self transitionDuration:self.transitionContext] * (1.0f - self.lastPercentComplete));
     return [self transitionDuration:self.transitionContext] * (1.0f - self.lastPercentComplete);
 }
 
