@@ -19,17 +19,17 @@
                     <rect key="frame" x="0.0" y="100" width="320" height="468"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <subviews>
-                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Profile" translatesAutoresizingMaskIntoConstraints="NO" id="TkK-3e-1nQ">
+                        <imageView userInteractionEnabled="NO" contentMode="top" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Profile" translatesAutoresizingMaskIntoConstraints="NO" id="TkK-3e-1nQ">
                             <rect key="frame" x="0.0" y="0.0" width="320" height="468"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         </imageView>
                         <button opaque="NO" alpha="0.59999999999999964" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HI0-Aw-ry6">
-                            <rect key="frame" x="227" y="188" width="100" height="44"/>
+                            <rect key="frame" x="110" y="184" width="100" height="100"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <color key="backgroundColor" red="1" green="0.55405745969999998" blue="0.58776461690000004" alpha="1" colorSpace="calibratedRGB"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="100" id="16u-Ky-EG8"/>
-                                <constraint firstAttribute="height" constant="44" id="YKy-61-xFb"/>
+                                <constraint firstAttribute="height" constant="100" id="YKy-61-xFb"/>
                             </constraints>
                             <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
                             <state key="normal">
@@ -44,8 +44,8 @@
                     <constraints>
                         <constraint firstAttribute="trailing" secondItem="TkK-3e-1nQ" secondAttribute="trailing" id="GAC-Xl-fWG"/>
                         <constraint firstItem="TkK-3e-1nQ" firstAttribute="leading" secondItem="pCs-4x-upQ" secondAttribute="leading" id="Kmh-W0-VXf"/>
-                        <constraint firstAttribute="centerY" secondItem="HI0-Aw-ry6" secondAttribute="centerY" constant="24" id="RVA-Px-f4n"/>
-                        <constraint firstAttribute="centerX" secondItem="HI0-Aw-ry6" secondAttribute="centerX" constant="-117" id="ck6-sg-KB2"/>
+                        <constraint firstAttribute="centerY" secondItem="HI0-Aw-ry6" secondAttribute="centerY" id="RVA-Px-f4n"/>
+                        <constraint firstAttribute="centerX" secondItem="HI0-Aw-ry6" secondAttribute="centerX" id="ck6-sg-KB2"/>
                         <constraint firstItem="TkK-3e-1nQ" firstAttribute="top" secondItem="pCs-4x-upQ" secondAttribute="top" id="ezD-b4-59x"/>
                         <constraint firstAttribute="bottom" secondItem="TkK-3e-1nQ" secondAttribute="bottom" id="pQa-so-hB3"/>
                     </constraints>
