@@ -10,6 +10,7 @@
 		505306F018E3159A00EF920E /* Animator.m in Sources */ = {isa = PBXBuildFile; fileRef = 505306ED18E3159A00EF920E /* Animator.m */; };
 		505306F118E3159A00EF920E /* TransitioningDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 505306EF18E3159A00EF920E /* TransitioningDelegate.m */; };
 		505306F518E35A7D00EF920E /* DynamicInteractiveTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = 505306F418E35A7D00EF920E /* DynamicInteractiveTransition.m */; };
+		5053078D18E5F2EF00EF920E /* TransitionUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 5053078C18E5F2EF00EF920E /* TransitionUtilities.m */; };
 		AFE8F09A18DE588400EE37E6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AFE8F09918DE588400EE37E6 /* Foundation.framework */; };
 		AFE8F09C18DE588400EE37E6 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AFE8F09B18DE588400EE37E6 /* CoreGraphics.framework */; };
 		AFE8F09E18DE588400EE37E6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AFE8F09D18DE588400EE37E6 /* UIKit.framework */; };
@@ -48,6 +49,8 @@
 		505306EF18E3159A00EF920E /* TransitioningDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TransitioningDelegate.m; sourceTree = "<group>"; };
 		505306F318E35A7D00EF920E /* DynamicInteractiveTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicInteractiveTransition.h; sourceTree = "<group>"; };
 		505306F418E35A7D00EF920E /* DynamicInteractiveTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DynamicInteractiveTransition.m; sourceTree = "<group>"; };
+		5053078B18E5F2EF00EF920E /* TransitionUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransitionUtilities.h; sourceTree = "<group>"; };
+		5053078C18E5F2EF00EF920E /* TransitionUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TransitionUtilities.m; sourceTree = "<group>"; };
 		AFE8F09618DE588400EE37E6 /* Cards.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cards.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AFE8F09918DE588400EE37E6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		AFE8F09B18DE588400EE37E6 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -193,6 +196,8 @@
 				AFE8F10418DF93EC00EE37E6 /* InteractiveTransition.m */,
 				505306F318E35A7D00EF920E /* DynamicInteractiveTransition.h */,
 				505306F418E35A7D00EF920E /* DynamicInteractiveTransition.m */,
+				5053078B18E5F2EF00EF920E /* TransitionUtilities.h */,
+				5053078C18E5F2EF00EF920E /* TransitionUtilities.m */,
 				505306EB18E3159A00EF920E /* Unused */,
 			);
 			path = Transitions;
@@ -314,6 +319,7 @@
 			files = (
 				AFE8F0AA18DE588400EE37E6 /* AppDelegate.m in Sources */,
 				505306F018E3159A00EF920E /* Animator.m in Sources */,
+				5053078D18E5F2EF00EF920E /* TransitionUtilities.m in Sources */,
 				AFE8F0FB18DF5AFC00EE37E6 /* FirstViewController.m in Sources */,
 				AFE8F0A618DE588400EE37E6 /* main.m in Sources */,
 				505306F518E35A7D00EF920E /* DynamicInteractiveTransition.m in Sources */,
