@@ -174,11 +174,11 @@ static const CGFloat Damping = 0.75f;
     {
         if (velocity.y > 0)
         {
-            [self finishInteractiveTransition:velocity];
+            [self finishInteractiveTransition];
         }
         else
         {
-            [self cancelInteractiveTransition:velocity];
+            [self cancelInteractiveTransition];
         }
     }
 }
@@ -193,7 +193,7 @@ static const CGFloat Damping = 0.75f;
     fromViewController.view.frame = [TransitionUtilities rectForPresentedState:transitionContext percentComplete:percentComplete forPresentation:self.isPresenting];
 }
 
-- (void)finishInteractiveTransition:(CGPoint)velocity
+- (void)finishInteractiveTransition
 {
     id<UIViewControllerContextTransitioning> transitionContext = self.transitionContext;
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
@@ -202,7 +202,7 @@ static const CGFloat Damping = 0.75f;
     toViewController.view.tintAdjustmentMode = UIViewTintAdjustmentModeAutomatic;
     // TODO: figure out if tintAdjustmentMode should be used
    
-    [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0.0f usingSpringWithDamping:Damping initialSpringVelocity:velocity.x options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+    [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0.0f usingSpringWithDamping:Damping initialSpringVelocity:1.0f options:UIViewAnimationOptionBeginFromCurrentState animations:^{
         
         fromViewController.view.frame = [TransitionUtilities rectForDismissedState:transitionContext forPresentation:self.isPresenting];
         
@@ -213,12 +213,12 @@ static const CGFloat Damping = 0.75f;
     }];
 }
 
-- (void)cancelInteractiveTransition:(CGPoint)velocity
+- (void)cancelInteractiveTransition
 {
     id<UIViewControllerContextTransitioning> transitionContext = self.transitionContext;
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
     
-    [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0.0f usingSpringWithDamping:Damping initialSpringVelocity:velocity.x options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+    [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0.0f usingSpringWithDamping:Damping initialSpringVelocity:1.0f options:UIViewAnimationOptionBeginFromCurrentState animations:^{
         
         fromViewController.view.frame = [TransitionUtilities rectForPresentedState:transitionContext forPresentation:self.isPresenting];
         
