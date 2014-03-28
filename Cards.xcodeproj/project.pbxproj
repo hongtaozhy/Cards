@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		505306F518E35A7D00EF920E /* InteractiveTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = 505306F418E35A7D00EF920E /* InteractiveTransition.m */; };
 		5053078D18E5F2EF00EF920E /* TransitionUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 5053078C18E5F2EF00EF920E /* TransitionUtilities.m */; };
+		5053079018E6065800EF920E /* DynamicInteractiveTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = 5053078F18E6065800EF920E /* DynamicInteractiveTransition.m */; };
 		AFE8F09A18DE588400EE37E6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AFE8F09918DE588400EE37E6 /* Foundation.framework */; };
 		AFE8F09C18DE588400EE37E6 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AFE8F09B18DE588400EE37E6 /* CoreGraphics.framework */; };
 		AFE8F09E18DE588400EE37E6 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AFE8F09D18DE588400EE37E6 /* UIKit.framework */; };
@@ -44,6 +45,8 @@
 		505306F418E35A7D00EF920E /* InteractiveTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InteractiveTransition.m; sourceTree = "<group>"; };
 		5053078B18E5F2EF00EF920E /* TransitionUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransitionUtilities.h; sourceTree = "<group>"; };
 		5053078C18E5F2EF00EF920E /* TransitionUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TransitionUtilities.m; sourceTree = "<group>"; };
+		5053078E18E6065800EF920E /* DynamicInteractiveTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicInteractiveTransition.h; sourceTree = "<group>"; };
+		5053078F18E6065800EF920E /* DynamicInteractiveTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DynamicInteractiveTransition.m; sourceTree = "<group>"; };
 		AFE8F09618DE588400EE37E6 /* Cards.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cards.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AFE8F09918DE588400EE37E6 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		AFE8F09B18DE588400EE37E6 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -176,6 +179,8 @@
 				505306F418E35A7D00EF920E /* InteractiveTransition.m */,
 				5053078B18E5F2EF00EF920E /* TransitionUtilities.h */,
 				5053078C18E5F2EF00EF920E /* TransitionUtilities.m */,
+				5053078E18E6065800EF920E /* DynamicInteractiveTransition.h */,
+				5053078F18E6065800EF920E /* DynamicInteractiveTransition.m */,
 			);
 			path = Transitions;
 			sourceTree = "<group>";
@@ -301,6 +306,7 @@
 				505306F518E35A7D00EF920E /* InteractiveTransition.m in Sources */,
 				AFE8F0F918DF5AFC00EE37E6 /* BaseViewController.m in Sources */,
 				AFE8F0F718DF5AFC00EE37E6 /* SecondViewController.m in Sources */,
+				5053079018E6065800EF920E /* DynamicInteractiveTransition.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
