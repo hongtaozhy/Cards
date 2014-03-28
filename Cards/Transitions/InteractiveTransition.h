@@ -1,8 +1,8 @@
 //
-//  InteractiveTransition.h
+//  DynamicInteractiveTransition.h
 //  Cards
 //
-//  Created by Alfred Hanssen on 3/23/14.
+//  Created by Hanssen, Alfie on 3/26/14.
 //  Copyright (c) 2014 Alfred Hanssen. All rights reserved.
 //
 

@@ -9,7 +9,7 @@
 #import "FirstViewController.h"
 #import "SecondViewController.h"
 #import "InteractiveTransition.h"
-#import "DynamicInteractiveTransition.h"
+#import "InteractiveTransition.h"
 #import "CardStyle.h"
 
 @interface FirstViewController ()
@@ -34,15 +34,7 @@
 {
     [super viewDidLoad];
     
-#ifdef AMH_USE_DYNAMICS
-
-    self.interactiveTransition = [[DynamicInteractiveTransition alloc] initWithViewController:self];
-
-#else
-    
     self.interactiveTransition = [[InteractiveTransition alloc] initWithViewController:self];
-    
-#endif
 
     [self setupGestureRecognizers];
     [self setupContentView];

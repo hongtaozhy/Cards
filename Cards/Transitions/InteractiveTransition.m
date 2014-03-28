@@ -1,14 +1,16 @@
-
-//  InteractiveTransition.m
+//
+//  DynamicInteractiveTransition.m
 //  Cards
 //
-//  Created by Alfred Hanssen on 3/23/14.
+//  Created by Hanssen, Alfie on 3/26/14.
 //  Copyright (c) 2014 Alfred Hanssen. All rights reserved.
 //
 
 #import "InteractiveTransition.h"
+#import "TransitionUtilities.h"
 
-static const CGFloat AnimationDuration = 0.30f;
+static const CGFloat AnimationDuration = 0.35f;
+static const CGFloat Damping = 0.75f;
 
 @interface InteractiveTransition () <UIViewControllerAnimatedTransitioning, UIViewControllerInteractiveTransitioning>
 
@@ -78,21 +80,21 @@ static const CGFloat AnimationDuration = 0.30f;
 
 - (void)animateTransition:(id <UIViewControllerContextTransitioning>)transitionContext
 {
+    self.transitionContext = transitionContext;
+    
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
     UIViewController *toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
-    UIView *containerView = transitionContext.containerView;
+    UIView *containerView = [transitionContext containerView];
     
     if (self.isPresenting)
     {
-        fromViewController.view.userInteractionEnabled = NO;
-
-        toViewController.view.frame = [self rectForDismissedState:transitionContext];
+        toViewController.view.frame = [TransitionUtilities rectForDismissedState:transitionContext forPresentation:self.isPresenting];
         [containerView addSubview:toViewController.view];
-
-        [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
+        
+        [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0.0f usingSpringWithDamping:Damping initialSpringVelocity:1.0f options:UIViewAnimationOptionBeginFromCurrentState animations:^{
             
             fromViewController.view.tintAdjustmentMode = UIViewTintAdjustmentModeDimmed;
-            toViewController.view.frame = [self rectForPresentedState:transitionContext];
+            toViewController.view.frame = [TransitionUtilities rectForPresentedState:transitionContext forPresentation:self.isPresenting];
             
         } completion:^(BOOL finished) {
             
@@ -102,12 +104,10 @@ static const CGFloat AnimationDuration = 0.30f;
     }
     else
     {
-        toViewController.view.userInteractionEnabled = YES;
-        
-        [UIView animateWithDuration:[self transitionDuration:transitionContext] animations:^{
+        [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0.0f usingSpringWithDamping:Damping initialSpringVelocity:1.0f options:UIViewAnimationOptionBeginFromCurrentState animations:^{
             
             toViewController.view.tintAdjustmentMode = UIViewTintAdjustmentModeAutomatic;
-            fromViewController.view.frame = [self rectForDismissedState:transitionContext];
+            fromViewController.view.frame = [TransitionUtilities rectForDismissedState:transitionContext forPresentation:self.isPresenting];
             
         } completion:^(BOOL finished) {
             
@@ -120,20 +120,24 @@ static const CGFloat AnimationDuration = 0.30f;
 
 - (void)animationEnded:(BOOL)transitionCompleted
 {
-    id<UIViewControllerContextTransitioning> transitionContext = self.transitionContext;
+   id<UIViewControllerContextTransitioning> transitionContext = self.transitionContext;
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
     UIViewController *toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
     
+    // TODO: Figure out if userInteractionEnabled should be used
     fromViewController.view.userInteractionEnabled = YES;
     toViewController.view.userInteractionEnabled = YES;
     
     self.interactive = NO;
     self.presenting = NO;
-    if (self.isInteractive)
-    {
-        self.viewController = nil;
-    }
     self.transitionContext = nil;
+}
+
+#pragma mark - UIDynamicAnimatorDelegate Methods
+
+- (void)dynamicAnimatorDidPause:(UIDynamicAnimator *)animator
+{
+    [self.transitionContext completeTransition:![self.transitionContext transitionWasCancelled]];
 }
 
 #pragma mark - Interactive Transitioning
@@ -163,19 +167,18 @@ static const CGFloat AnimationDuration = 0.30f;
     else if (recognizer.state == UIGestureRecognizerStateChanged)
     {
         CGFloat percent = translation.y / recognizer.view.bounds.size.height;
-        percent = fmaxf(0.0f, percent); // Clamp values in the event of fast pan
-        percent = fminf(1.0f, percent);
+        percent = fminf(1.0f, percent); // Clamp values in the event of fast pan
         [self updateInteractiveTransition:percent];
     }
     else if (recognizer.state == UIGestureRecognizerStateEnded)
     {
         if (velocity.y > 0)
         {
-            [self finishInteractiveTransition];
+            [self finishInteractiveTransition:velocity];
         }
         else
         {
-            [self cancelInteractiveTransition];
+            [self cancelInteractiveTransition:velocity];
         }
     }
 }
@@ -187,183 +190,43 @@ static const CGFloat AnimationDuration = 0.30f;
     id<UIViewControllerContextTransitioning> transitionContext = self.transitionContext;
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
     
-    fromViewController.view.frame = [self rectForPresentedState:transitionContext percentComplete:percentComplete];
+    fromViewController.view.frame = [TransitionUtilities rectForPresentedState:transitionContext percentComplete:percentComplete forPresentation:self.isPresenting];
 }
 
-- (void)finishInteractiveTransition
+- (void)finishInteractiveTransition:(CGPoint)velocity
 {
     id<UIViewControllerContextTransitioning> transitionContext = self.transitionContext;
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
-
+    
     UIViewController *toViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
-    toViewController.view.userInteractionEnabled = YES;
     toViewController.view.tintAdjustmentMode = UIViewTintAdjustmentModeAutomatic;
-
-    [UIView animateWithDuration:[self completionSpeed] animations:^{
+    // TODO: figure out if tintAdjustmentMode should be used
    
-        fromViewController.view.frame = [self rectForDismissedState:transitionContext];
-    
+    [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0.0f usingSpringWithDamping:Damping initialSpringVelocity:velocity.x options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+        
+        fromViewController.view.frame = [TransitionUtilities rectForDismissedState:transitionContext forPresentation:self.isPresenting];
+        
     } completion:^(BOOL finished) {
-    
+        
         [transitionContext completeTransition:YES];
         
     }];
 }
 
-- (void)cancelInteractiveTransition
+- (void)cancelInteractiveTransition:(CGPoint)velocity
 {
     id<UIViewControllerContextTransitioning> transitionContext = self.transitionContext;
     UIViewController *fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
     
-    [UIView animateWithDuration:[self completionSpeed] animations:^{
-    
-        fromViewController.view.frame = [self rectForPresentedState:transitionContext];
-    
+    [UIView animateWithDuration:[self transitionDuration:transitionContext] delay:0.0f usingSpringWithDamping:Damping initialSpringVelocity:velocity.x options:UIViewAnimationOptionBeginFromCurrentState animations:^{
+        
+        fromViewController.view.frame = [TransitionUtilities rectForPresentedState:transitionContext forPresentation:self.isPresenting];
+        
     } completion:^(BOOL finished) {
-    
+        
         [transitionContext completeTransition:NO];
         
     }];
-}
-
-#pragma mark - Utilities
-
-// These are necessary because containerView is always portrait orientation (doesn't respect rotation changes)
-// http://stackoverflow.com/questions/20013929/workaround-for-custom-uiviewcontroller-animations-in-landscape
-// http://www.brightec.co.uk/blog/ios-7-custom-view-controller-transitions-and-rotation-making-it-all-work
-
-- (CGRect)rectForDismissedState:(id<UIViewControllerContextTransitioning>)transitionContext
-{
-    UIView *containerView = [transitionContext containerView];
-    UIViewController *fromViewController = nil;
-    
-    if (self.isPresenting)
-    {
-        fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
-    }
-    else
-    {
-        fromViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
-    }
-    
-    CGRect frame = CGRectZero;
-    
-    switch (fromViewController.interfaceOrientation)
-    {
-        case UIInterfaceOrientationLandscapeRight:
-            frame = CGRectMake(-containerView.bounds.size.width,
-                              0,
-                              containerView.bounds.size.width,
-                              containerView.bounds.size.height);
-            break;
-          
-        case UIInterfaceOrientationLandscapeLeft:
-            frame = CGRectMake(containerView.bounds.size.width,
-                              0,
-                              containerView.bounds.size.width,
-                              containerView.bounds.size.height);
-            break;
-            
-        case UIInterfaceOrientationPortraitUpsideDown:
-            frame = CGRectMake(0,
-                              -containerView.bounds.size.height,
-                              containerView.bounds.size.width,
-                              containerView.bounds.size.height);
-            break;
-            
-        case UIInterfaceOrientationPortrait:
-            frame = CGRectMake(0,
-                              containerView.bounds.size.height,
-                              containerView.bounds.size.width,
-                              containerView.bounds.size.height);
-            break;
-
-        default:
-            break;
-    }
-    
-    return frame;
-}
-
-
-- (CGRect)rectForPresentedState:(id<UIViewControllerContextTransitioning>)transitionContext
-{
-    UIView *containerView = [transitionContext containerView];
-    UIViewController *fromViewController = nil;
-
-    if (self.isPresenting)
-    {
-        fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
-    }
-    else
-    {
-        fromViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
-    }
-    
-    CGRect frame = CGRectZero;
-    
-    switch (fromViewController.interfaceOrientation)
-    {
-        case UIInterfaceOrientationLandscapeRight:
-            frame = CGRectOffset([self rectForDismissedState:transitionContext], containerView.bounds.size.width, 0);
-            break;
-
-        case UIInterfaceOrientationLandscapeLeft:
-            frame = CGRectOffset([self rectForDismissedState:transitionContext], -1.0f * containerView.bounds.size.width, 0);
-            break;
-        
-        case UIInterfaceOrientationPortraitUpsideDown:
-            frame = CGRectOffset([self rectForDismissedState:transitionContext], 0, containerView.bounds.size.height);
-            break;
-        
-        case UIInterfaceOrientationPortrait:
-            frame = CGRectOffset([self rectForDismissedState:transitionContext], 0, -1.0f * containerView.bounds.size.height);
-            break;
-            
-        default:
-            break;
-    }
-    
-    return frame;
-}
-
-- (CGRect)rectForPresentedState:(id<UIViewControllerContextTransitioning>)transitionContext percentComplete:(CGFloat)percentComplete
-{
-    UIViewController *fromViewController = nil;
-    if (self.isPresenting)
-    {
-        fromViewController = [transitionContext viewControllerForKey:UITransitionContextFromViewControllerKey];
-    }
-    else
-    {
-        fromViewController = [transitionContext viewControllerForKey:UITransitionContextToViewControllerKey];
-    }
-
-    CGRect frame = [self rectForPresentedState:transitionContext];
-
-    switch (fromViewController.interfaceOrientation)
-    {
-        case UIInterfaceOrientationLandscapeRight:
-            frame = CGRectOffset(frame, -1.0f * CGRectGetWidth(frame) * percentComplete, 0.0f);
-            break;
-            
-        case UIInterfaceOrientationLandscapeLeft:
-            frame = CGRectOffset(frame, CGRectGetWidth(frame) * percentComplete, 0.0f);
-            break;
-            
-        case UIInterfaceOrientationPortraitUpsideDown:
-            frame = CGRectOffset(frame, 0.0f, -1.0f * CGRectGetHeight(frame) * percentComplete);
-            break;
-            
-        case UIInterfaceOrientationPortrait:
-            frame = CGRectOffset(frame, 0.0f, CGRectGetHeight(frame) * percentComplete);
-            break;
-            
-        default:
-            break;
-    }
-    
-    return frame;
 }
 
 @end

@@ -7,9 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		505306F018E3159A00EF920E /* Animator.m in Sources */ = {isa = PBXBuildFile; fileRef = 505306ED18E3159A00EF920E /* Animator.m */; };
-		505306F118E3159A00EF920E /* TransitioningDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 505306EF18E3159A00EF920E /* TransitioningDelegate.m */; };
-		505306F518E35A7D00EF920E /* DynamicInteractiveTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = 505306F418E35A7D00EF920E /* DynamicInteractiveTransition.m */; };
+		505306F518E35A7D00EF920E /* InteractiveTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = 505306F418E35A7D00EF920E /* InteractiveTransition.m */; };
 		5053078D18E5F2EF00EF920E /* TransitionUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 5053078C18E5F2EF00EF920E /* TransitionUtilities.m */; };
 		AFE8F09A18DE588400EE37E6 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AFE8F09918DE588400EE37E6 /* Foundation.framework */; };
 		AFE8F09C18DE588400EE37E6 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AFE8F09B18DE588400EE37E6 /* CoreGraphics.framework */; };
@@ -29,7 +27,6 @@
 		AFE8F0FA18DF5AFC00EE37E6 /* BaseViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = AFE8F0F018DF5AFC00EE37E6 /* BaseViewController.xib */; };
 		AFE8F0FB18DF5AFC00EE37E6 /* FirstViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AFE8F0F218DF5AFC00EE37E6 /* FirstViewController.m */; };
 		AFE8F0FC18DF5AFC00EE37E6 /* FirstViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = AFE8F0F318DF5AFC00EE37E6 /* FirstViewController.xib */; };
-		AFE8F10518DF93EC00EE37E6 /* InteractiveTransition.m in Sources */ = {isa = PBXBuildFile; fileRef = AFE8F10418DF93EC00EE37E6 /* InteractiveTransition.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,12 +40,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		505306EC18E3159A00EF920E /* Animator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Animator.h; sourceTree = "<group>"; };
-		505306ED18E3159A00EF920E /* Animator.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Animator.m; sourceTree = "<group>"; };
-		505306EE18E3159A00EF920E /* TransitioningDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransitioningDelegate.h; sourceTree = "<group>"; };
-		505306EF18E3159A00EF920E /* TransitioningDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TransitioningDelegate.m; sourceTree = "<group>"; };
-		505306F318E35A7D00EF920E /* DynamicInteractiveTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicInteractiveTransition.h; sourceTree = "<group>"; };
-		505306F418E35A7D00EF920E /* DynamicInteractiveTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DynamicInteractiveTransition.m; sourceTree = "<group>"; };
+		505306F318E35A7D00EF920E /* InteractiveTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InteractiveTransition.h; sourceTree = "<group>"; };
+		505306F418E35A7D00EF920E /* InteractiveTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InteractiveTransition.m; sourceTree = "<group>"; };
 		5053078B18E5F2EF00EF920E /* TransitionUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TransitionUtilities.h; sourceTree = "<group>"; };
 		5053078C18E5F2EF00EF920E /* TransitionUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TransitionUtilities.m; sourceTree = "<group>"; };
 		AFE8F09618DE588400EE37E6 /* Cards.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Cards.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -77,8 +70,6 @@
 		AFE8F0F118DF5AFC00EE37E6 /* FirstViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FirstViewController.h; sourceTree = "<group>"; };
 		AFE8F0F218DF5AFC00EE37E6 /* FirstViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FirstViewController.m; sourceTree = "<group>"; };
 		AFE8F0F318DF5AFC00EE37E6 /* FirstViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = FirstViewController.xib; sourceTree = "<group>"; };
-		AFE8F10318DF93EC00EE37E6 /* InteractiveTransition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InteractiveTransition.h; sourceTree = "<group>"; };
-		AFE8F10418DF93EC00EE37E6 /* InteractiveTransition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InteractiveTransition.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -105,17 +96,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		505306EB18E3159A00EF920E /* Unused */ = {
-			isa = PBXGroup;
-			children = (
-				505306EC18E3159A00EF920E /* Animator.h */,
-				505306ED18E3159A00EF920E /* Animator.m */,
-				505306EE18E3159A00EF920E /* TransitioningDelegate.h */,
-				505306EF18E3159A00EF920E /* TransitioningDelegate.m */,
-			);
-			path = Unused;
-			sourceTree = "<group>";
-		};
 		AFE8F08D18DE588400EE37E6 = {
 			isa = PBXGroup;
 			children = (
@@ -192,13 +172,10 @@
 		AFE8F0E318DF5AFC00EE37E6 /* Transitions */ = {
 			isa = PBXGroup;
 			children = (
-				AFE8F10318DF93EC00EE37E6 /* InteractiveTransition.h */,
-				AFE8F10418DF93EC00EE37E6 /* InteractiveTransition.m */,
-				505306F318E35A7D00EF920E /* DynamicInteractiveTransition.h */,
-				505306F418E35A7D00EF920E /* DynamicInteractiveTransition.m */,
+				505306F318E35A7D00EF920E /* InteractiveTransition.h */,
+				505306F418E35A7D00EF920E /* InteractiveTransition.m */,
 				5053078B18E5F2EF00EF920E /* TransitionUtilities.h */,
 				5053078C18E5F2EF00EF920E /* TransitionUtilities.m */,
-				505306EB18E3159A00EF920E /* Unused */,
 			);
 			path = Transitions;
 			sourceTree = "<group>";
@@ -318,14 +295,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				AFE8F0AA18DE588400EE37E6 /* AppDelegate.m in Sources */,
-				505306F018E3159A00EF920E /* Animator.m in Sources */,
 				5053078D18E5F2EF00EF920E /* TransitionUtilities.m in Sources */,
 				AFE8F0FB18DF5AFC00EE37E6 /* FirstViewController.m in Sources */,
 				AFE8F0A618DE588400EE37E6 /* main.m in Sources */,
-				505306F518E35A7D00EF920E /* DynamicInteractiveTransition.m in Sources */,
-				AFE8F10518DF93EC00EE37E6 /* InteractiveTransition.m in Sources */,
+				505306F518E35A7D00EF920E /* InteractiveTransition.m in Sources */,
 				AFE8F0F918DF5AFC00EE37E6 /* BaseViewController.m in Sources */,
-				505306F118E3159A00EF920E /* TransitioningDelegate.m in Sources */,
 				AFE8F0F718DF5AFC00EE37E6 /* SecondViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

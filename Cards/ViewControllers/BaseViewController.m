@@ -9,7 +9,6 @@
 #import "BaseViewController.h"
 #import "FirstViewController.h"
 #import "InteractiveTransition.h"
-#import "DynamicInteractiveTransition.h"
 #import "CardStyle.h"
 
 @interface BaseViewController ()
@@ -33,15 +32,7 @@
 {
     [super viewDidLoad];
     
-#ifdef AMH_USE_DYNAMICS
-    
-    self.interactiveTransition = [[DynamicInteractiveTransition alloc] initWithViewController:self];
-
-#else
-
     self.interactiveTransition = [[InteractiveTransition alloc] initWithViewController:self];
-
-#endif
 }
 
 - (void)viewWillAppear:(BOOL)animated
