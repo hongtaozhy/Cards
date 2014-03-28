@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5053" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="5053" systemVersion="12F45" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="5053"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3733"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SecondViewController">
@@ -18,7 +18,19 @@
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="rYe-yk-EqB">
                     <rect key="frame" x="0.0" y="105" width="320" height="463"/>
                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    <subviews>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Following" translatesAutoresizingMaskIntoConstraints="NO" id="cIX-57-BU0">
+                            <rect key="frame" x="0.0" y="0.0" width="320" height="463"/>
+                            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        </imageView>
+                    </subviews>
                     <color key="backgroundColor" red="0.93148311491935487" green="1" blue="0.89935105846774188" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstItem="cIX-57-BU0" firstAttribute="top" secondItem="rYe-yk-EqB" secondAttribute="top" id="1B4-PU-hax"/>
+                        <constraint firstAttribute="bottom" secondItem="cIX-57-BU0" secondAttribute="bottom" id="bh8-yq-hgc"/>
+                        <constraint firstAttribute="trailing" secondItem="cIX-57-BU0" secondAttribute="trailing" id="fkW-8t-esx"/>
+                        <constraint firstItem="cIX-57-BU0" firstAttribute="leading" secondItem="rYe-yk-EqB" secondAttribute="leading" id="xzu-bF-jtH"/>
+                    </constraints>
                 </view>
             </subviews>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
@@ -32,4 +44,7 @@
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
         </view>
     </objects>
+    <resources>
+        <image name="Following" width="320" height="493"/>
+    </resources>
 </document>
